@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
@@ -7,28 +7,45 @@ import { NgFor } from '@angular/common';
 @Component({
   selector: 'app-cricket',
   standalone: true,
-  imports: [MatExpansionModule,NgFor],
+  imports: [MatExpansionModule, NgFor],
   templateUrl: './cricket.component.html',
   styleUrl: './cricket.component.css'
 })
 export class CricketComponent implements OnInit {
-  cricketList: any;
-  readonly panelOpenState = signal(false);
+  inPlayList: any;
+  todaySportsList: any;
+  tomorrowSportsList: any;
 
-  constructor(private httpService: HttpService,private router:Router) {
+  constructor(private httpService: HttpService, private router: Router) {
 
   }
   ngOnInit(): void {
-    this.getCricketData();
+    this.getInPlayData();
   }
 
   //Get cricket Data
 
-  getCricketData() {
+  getInPlayData() {
     const url = 'https://ag.bet36.live/api-V2/getInPlayGames';
     this.httpService.fetchSportsData(url, '').subscribe({
       next: ((response: any) => {
-        this.cricketList = response;
+        this.inPlayList = response.map((match: { sportid: any; }) => {
+          let category = '';
+          switch (match.sportid) {
+            case 1:
+              category = 'Soccer';
+              break;
+            case 4:
+              category = 'Cricket';
+              break;
+            case 2:
+              category = 'Tennis';
+              break;
+            default:
+              category = 'Unknown Sport';
+          }
+          return { ...match, category };
+        });
       }),
       error: ((error: any) => {
         alert(error);
@@ -36,10 +53,32 @@ export class CricketComponent implements OnInit {
     })
   }
 
-  getTodayData(){
-    this.router.navigate(['soccer'])
+  // get today data
+  getTodayData() {
+    const url = 'https://ag.bet36.live/api-V2/getTodayGames';
+    this.httpService.fetchSportsData(url, '').subscribe({
+      next: ((response: any) => {
+        this.todaySportsList = response;
+      }),
+      error: ((error: any) => {
+        alert(error);
+      })
+    })
   }
-  getTomorrowData(){
-    this.router.navigate(['tennis'])
+
+  // get tomorrow data
+
+  getTomorrowData() {
+    const url = 'https://ag.bet36.live/api-V2/getTomorrowGames';
+    this.httpService.fetchSportsData(url, '').subscribe({
+      next: ((response: any) => {
+        this.tomorrowSportsList = response;
+      }),
+      error: ((error: any) => {
+        alert(error);
+      })
+    })
   }
+
+
 }
