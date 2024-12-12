@@ -1,98 +1,127 @@
 <div class="container mt-5">
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
-                type="button" role="tab" aria-controls="pills-home" aria-selected="true">In-Play</button>
+            <button class="nav-link active" id="pills-inplay-tab" data-bs-toggle="pill" data-bs-target="#pills-inplay"
+                type="button" role="tab" aria-controls="pills-inplay" aria-selected="true">In-Play</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" (click)="getTodayData()" id="pills-profile-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+            <button class="nav-link" (click)="getTodayData()" id="pills-today-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-today" type="button" role="tab" aria-controls="pills-today"
                 aria-selected="false">Today</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" (click)="getTomorrowData()" id="pills-contact-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
+            <button class="nav-link" (click)="getTomorrowData()" id="pills-tomorrow-tab" data-bs-toggle="pill"
+                data-bs-target="#pills-tomorrow" type="button" role="tab" aria-controls="pills-tomorrow"
                 aria-selected="false">Tomorrow</button>
         </li>
     </ul>
     <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-            <div class="accordion accordion-flush" id="accordionFlushExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="flush-headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Cricket
+        <div class="tab-pane fade show active" id="pills-inplay" role="tabpanel" aria-labelledby="pills-inplay-tab">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item" *ngFor="let sport of sports">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h3>{{ sport }}</h3>
                         </button>
                     </h2>
-                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                        data-bs-parent="#accordionFlushExample">
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <table>
-                                <tbody *ngFor="let item of inPlayList">
+                            <table class="table table-bordered" *ngIf="filterMatchesBySport(inPlayList, sport)?.length">
+                                <thead>
                                     <tr>
-                                        <td>{{item?.seriesname}} In-Play</td>
-                                        <td>{{item?.b1}} In-Play</td>
-                                        <td>{{item?.b2}} In-Play</td>
+                                        <th>Series Name</th>
+                                        <th>Team 1</th>
+                                        <th>Team 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let match of filterMatchesBySport(inPlayList, sport)">
+                                        <td>{{ match.seriesname }}</td>
+                                        <td>{{ match.b1 }}</td>
+                                        <td>{{ match.b2 }}</td>
                                     </tr>
                                 </tbody>
-
-
                             </table>
+                            <p *ngIf="!filterMatchesBySport(inPlayList, sport)?.length">No matches available.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-            <div class="accordion accordion-flush" id="accordionFlushExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="flush-headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Today
+
+
+        <div class="tab-pane fade" id="pills-today" role="tabpanel" aria-labelledby="pills-today-tab">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item" *ngFor="let sport of sports">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h3>{{ sport }}</h3>
                         </button>
                     </h2>
-                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                        data-bs-parent="#accordionFlushExample">
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <table>
-                                <tbody *ngFor="let item of inPlayList">
+                            <table class="table table-bordered"
+                                *ngIf="filterMatchesBySport(todaySportsList, sport)?.length">
+                                <thead>
                                     <tr>
-                                        <td>{{item?.seriesname}} In-Play</td>
-                                        <td>{{item?.b1}} In-Play</td>
-                                        <td>{{item?.b2}} In-Play</td>
+                                        <th>Time</th>
+                                        <th>Series Name</th>
+                                        <th>Team 1</th>
+                                        <th>Team 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let match of filterMatchesBySport(todaySportsList, sport)">
+                                        <td>{{ match.time }}</td>
+                                        <td>{{ match.seriesname }}</td>
+                                        <td>{{ match.b1 }}</td>
+                                        <td>{{ match.b2 }}</td>
                                     </tr>
                                 </tbody>
-
-
                             </table>
+                            <p *ngIf="!filterMatchesBySport(todaySportsList, sport)?.length">No matches available.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-            <div class="accordion accordion-flush" id="accordionFlushExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="flush-headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Tomorrow
+
+        <div class="tab-pane fade" id="pills-tomorrow" role="tabpanel" aria-labelledby="pills-tomorrow-tab">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item" *ngFor="let sport of sports">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h3>{{ sport }}</h3>
                         </button>
                     </h2>
-                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                        data-bs-parent="#accordionFlushExample">
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <table>
-                                <tbody *ngFor="let item of inPlayList">
+                            <table class="table table-bordered"
+                                *ngIf="filterMatchesBySport(tomorrowSportsList, sport)?.length">
+                                <thead>
                                     <tr>
-                                        <td>{{item?.seriesname}} In-Play</td>
-                                        <td>{{item?.b1}} In-Play</td>
-                                        <td>{{item?.b2}} In-Play</td>
+                                        <th>Time</th>
+                                        <th>Series Name</th>
+                                        <th>Team 1</th>
+                                        <th>Team 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let match of filterMatchesBySport(tomorrowSportsList, sport)">
+                                        <td>{{ match.time }}</td>
+                                        <td>{{ match.seriesname }}</td>
+                                        <td>{{ match.b1 }}</td>
+                                        <td>{{ match.b2 }}</td>
                                     </tr>
                                 </tbody>
                             </table>
+                            <p *ngIf="!filterMatchesBySport(tomorrowSportsList, sport)?.length">No matches available.</p>
                         </div>
                     </div>
                 </div>
